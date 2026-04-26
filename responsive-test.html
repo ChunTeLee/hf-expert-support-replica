@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Responsive Test</title>
+<style>
+  body { margin: 0; font-family: system-ui, sans-serif; background: #f1f5f9; padding: 16px; }
+  .row { display: flex; gap: 16px; align-items: flex-start; }
+  .frame { background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px; }
+  .frame h4 { margin: 0 0 6px; font-size: 12px; color: #475569; }
+  iframe { display: block; border: 0; border-radius: 4px; }
+</style>
+</head>
+<body>
+<div class="row">
+  <div class="frame"><h4>1280px (desktop, native, full)</h4>
+    <iframe src="index.html" width="1280" height="700"></iframe>
+  </div>
+  <div class="frame"><h4>768px (tablet, native, clipped at edges)</h4>
+    <iframe src="index.html" width="768" height="700"></iframe>
+  </div>
+  <div class="frame"><h4>420px (mobile, clusters shifted inward)</h4>
+    <iframe src="index.html" width="420" height="700"></iframe>
+  </div>
+</div>
+</body>
+</html>

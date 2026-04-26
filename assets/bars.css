@@ -1,0 +1,60 @@
+/* Iso grid + bars share a fixed-size 1280x515 stage. */
+/* Tablet (<1280): native size, edges just clip. */
+/* Mobile (<768): each cluster translates inward via --mobile-shift. */
+section:has(.iso-stage) {
+  min-height: 515px;
+  justify-content: center;
+}
+.iso-stage {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 1280px; height: 515px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: -1;
+  --mobile-shift: 0px;
+}
+.iso-grid-bg { position: absolute; inset: 0; z-index: -1; background-image: url(iso-grid-tile.svg); background-repeat: repeat; background-position: calc(50% + -34.190px) calc(50% + -10.960px); }
+.iso-grid-bg-cover { position: absolute; inset: 0; z-index: -2; background: white; }
+
+.bars-layer { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+.bars-layer .bar { position: absolute; display: block; --side-x: 0px; }
+.bars-layer .bar img { display: block; width: 100%; height: 100%; }
+.bars-layer .bar.flip { transform: translate(calc(-50% + var(--side-x)), -50%) scaleX(-1); }
+.bars-layer .bar:not(.flip) { transform: translate(calc(-50% + var(--side-x)), -50%); }
+.bars-layer .bar-left { --side-x: var(--mobile-shift, 0px); }
+.bars-layer .bar-right { --side-x: calc(-1 * var(--mobile-shift, 0px)); }
+
+/* Mobile: pull both clusters inward so partial cubes show on each edge */
+@media (max-width: 767px) {
+  .iso-stage { --mobile-shift: 320px; }
+}
+
+.bar-2685 { width: 90.212px; height: 260.032px; left: calc(50% + -529.190px); top: calc(50% + 119.03px); }
+.bar-2686 { width: 90.202px; height: 51.961px; left: calc(50% + 552.255px); top: calc(50% + 197.08px); }
+.bar-2687 { width: 45.096px; height: 77.941px; left: calc(50% + 529.702px); top: calc(50% + 233.96px); }
+.bar-2688 { width: 90.202px; height: 259.804px; left: calc(50% + 552.255px); top: calc(50% + 145.12px); }
+.bar-2689 { width: 44.978px; height: 233.824px; left: calc(50% + 484.665px); top: calc(50% + 132.13px); }
+.bar-2690 { width: 44.968px; height: 181.863px; left: calc(50% + 394.586px); top: calc(50% + 158.11px); }
+.bar-2691 { width: 135.180px; height: 233.824px; left: calc(50% + 394.586px); top: calc(50% + 184.09px); }
+.bar-2692 { width: 44.978px; height: 129.903px; left: calc(50% + 304.507px); top: calc(50% + 236.05px); }
+.bar-2693 { width: 45.096px; height: 181.863px; left: calc(50% + 259.470px); top: calc(50% + 210.07px); }
+.bar-2694 { width: 45.106px; height: 181.863px; left: calc(50% + 214.369px); top: calc(50% + 210.07px); }
+.bar-2695 { width: 45.096px; height: 78px; left: calc(50% + -326.356px); top: calc(50% + 236.05px); }
+.bar-2696 { width: 44.978px; height: 78px; left: calc(50% + -371.393px); top: calc(50% + 236.05px); }
+.bar-2697 { width: 45.106px; height: 129.98px; left: calc(50% + -236.149px); top: calc(50% + 210.06px); }
+.bar-2698 { width: 45.106px; height: 129.98px; left: calc(50% + -281.255px); top: calc(50% + 210.06px); }
+.bar-2699 { width: 45.106px; height: 78px; left: calc(50% + -416.435px); top: calc(50% + 184.05px); }
+.bar-2700 { width: 45.096px; height: 78px; left: calc(50% + -461.536px); top: calc(50% + 184.05px); }
+.bar-2701 { width: 45.096px; height: 78px; left: calc(50% + -596.844px); top: calc(50% + 210.05px); }
+.bar-2702 { width: 45.106px; height: 181.98px; left: calc(50% + -551.743px); top: calc(50% + 80.06px); }
+.bar-2703 { width: 90.074px; height: 51.961px; left: calc(50% + 417.139px); top: calc(50% + 67.18px); }
+.bar-2704 { width: 90.074px; height: 51.961px; left: calc(50% + 507.213px); top: calc(50% + 15.22px); }
+.bar-2705 { width: 90.074px; height: 51.961px; left: calc(50% + 372.033px); top: calc(50% + 145.12px); }
+.bar-2706 { width: 90.084px; height: 51.961px; left: calc(50% + 327.060px); top: calc(50% + 171.1px); }
+.bar-2707 { width: 90.202px; height: 51.961px; left: calc(50% + 236.917px); top: calc(50% + 119.14px); }
+.bar-2708 { width: 90.074px; height: 52px; left: calc(50% + -348.845px); top: calc(50% + 197.05px); }
+.bar-2709 { width: 90.212px; height: 51.98px; left: calc(50% + -258.702px); top: calc(50% + 145.06px); }
+.bar-2710 { width: 90.202px; height: 52px; left: calc(50% + -438.983px); top: calc(50% + 145.05px); }
+.bar-2711 { width: 90.074px; height: 52px; left: calc(50% + -573.971px); top: calc(50% + 171.05px); }
+.bar-2712 { width: 90.212px; height: 52.012px; left: calc(50% + -529.190px); top: calc(50% + -10.96px); }

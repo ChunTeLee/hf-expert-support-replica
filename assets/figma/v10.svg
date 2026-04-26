@@ -1,0 +1,25 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 45.0028 181.863" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="Vector">
+<path d="M0 25.9804L44.9994 0L45.0028 155.883L0.00341797 181.863L0 25.9804Z" fill="var(--fill-0, white)"/>
+<path d="M0 25.9804L44.9994 0L45.0028 155.883L0.00341797 181.863L0 25.9804Z" fill="url(#pattern0_0_12)"/>
+<path d="M0 25.9804L44.9994 0L45.0028 155.883L0.00341797 181.863L0 25.9804Z" fill="url(#paint0_linear_0_12)"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_12" x1="22.5014" y1="0" x2="22.5014" y2="181.863" gradientUnits="userSpaceOnUse">
+<stop offset="0.313555" stop-color="white" stop-opacity="0"/>
+<stop offset="0.79561" stop-color="white"/>
+</linearGradient>
+<pattern id="pattern0_0_12" patternUnits="userSpaceOnUse" patternTransform="matrix(6.48 0 0 3.73 16.0214 87.2015)" preserveAspectRatio="none" viewBox="0 0 324 186.5" width="1" height="1">
+<use xlink:href="#pattern0_0_12_inner" transform="translate(-324 -186.5)"/>
+<use xlink:href="#pattern0_0_12_inner" transform="translate(0 -186.5)"/>
+<use xlink:href="#pattern0_0_12_inner" transform="translate(-324 0)"/>
+<g id="pattern0_0_12_inner">
+<g id="Frame 1" clip-path="url(#clip0_0_12)">
+<path id="Vector_2" d="M942.12 -170L-294 543.656" stroke="var(--stroke-0, #DFE5EE)" stroke-width="60"/>
+</g>
+</g>
+</pattern><clipPath id="clip0_0_12">
+<rect width="648" height="373" fill="white"/>
+</clipPath>
+</defs>
+</svg>
