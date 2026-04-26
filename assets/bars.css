@@ -14,8 +14,8 @@ section:has(.iso-stage) {
   z-index: -1;
   --mobile-shift: 0px;
 }
-.iso-grid-bg { position: absolute; inset: 0; z-index: -1; background-image: url(iso-grid-tile.svg); background-repeat: repeat; background-position: calc(50% + -34.190px) calc(50% + -10.960px); }
-.iso-grid-bg-cover { position: absolute; inset: 0; z-index: -2; background: white; }
+.iso-grid-bg { position: absolute; inset: var(--grid-inset, 0); z-index: -1; background-image: url(iso-grid-tile.svg); background-repeat: repeat; background-position: calc(50% + -34.190px) calc(50% + -10.960px); }
+.iso-grid-bg-cover { position: absolute; inset: var(--grid-inset, 0); z-index: -2; background: white; }
 
 .bars-layer { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
 .bars-layer .bar { position: absolute; display: block; --side-x: 0px; }
@@ -25,9 +25,17 @@ section:has(.iso-stage) {
 .bars-layer .bar-left { --side-x: var(--mobile-shift, 0px); }
 .bars-layer .bar-right { --side-x: calc(-1 * var(--mobile-shift, 0px)); }
 
-/* Mobile: pull both clusters inward so partial cubes show on each edge */
+/* Mobile: start from native layout (clipped at edges), close the gap
+   between left/right clusters by 180px total (90px each side), and scale
+   the whole stage down a bit. The grid backdrop is extended via negative
+   inset so even after scaling, the dash lines still reach all four edges
+   of the section (including just under the header). */
 @media (max-width: 767px) {
-  .iso-stage { --mobile-shift: 320px; }
+  .iso-stage {
+    --mobile-shift: 90px;
+    --grid-inset: -100px;
+    transform: translate(-50%, -50%) scale(0.85);
+  }
 }
 
 .bar-2685 { width: 90.212px; height: 260.032px; left: calc(50% + -529.190px); top: calc(50% + 119.03px); }
