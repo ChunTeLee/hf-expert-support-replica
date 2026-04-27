@@ -6,3 +6,7 @@ inline-styles.json
 meta.json
 links.json
 __pycache__/
+
+# Local archives -- generated from dark/ folder on demand, not tracked.
+*.rar
+*.zip

@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 <link rel="stylesheet" href="assets/style.css">
-<link rel="stylesheet" href="assets/bars.css?v=23">
+<link rel="stylesheet" href="assets/bars.css?v=24">
 <script>
   // Resolve theme synchronously before paint to avoid a light->dark flash.
   // Order of preference: explicit user toggle (localStorage) -> OS preference.
@@ -73,17 +73,19 @@
   (function () {
     'use strict';
 
-    // Each .bars-layer <img> has two physical SVG sources: vN.svg for
-    // light theme and vN-dark.svg for dark theme. syncBarSrcs() swaps
-    // every bar's src to the variant that matches the active theme.
-    // The original (light) src is memoised on the element itself so we
-    // never lose it across toggles.
+    // Each .bars-layer <img> has two physical SVG sources:
+    //   light: assets/figma/vN.svg
+    //   dark:  assets/figma/dark/vN.svg
+    // The dark file lives under a sibling `dark/` folder, same filename
+    // as the light original. syncBarSrcs() rewrites every bar's <img src>
+    // by inserting or removing the `dark/` segment based on theme. The
+    // light src is memoised on the element so we never lose it.
     function syncBarSrcs(dark) {
       var imgs = document.querySelectorAll('.bars-layer img');
       imgs.forEach(function (img) {
         if (!img.dataset.lightSrc) img.dataset.lightSrc = img.getAttribute('src');
         var light = img.dataset.lightSrc;
-        var darkSrc = light.replace(/(\.svg)(\?.*)?$/, '-dark$1$2');
+        var darkSrc = light.replace(/(figma\/)([^/]+\.svg)/, '$1dark/$2');
         img.src = dark ? darkSrc : light;
       });
     }
