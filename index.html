@@ -8,7 +8,19 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 <link rel="stylesheet" href="assets/style.css">
-<link rel="stylesheet" href="assets/bars.css?v=17">
+<link rel="stylesheet" href="assets/bars.css?v=18">
+<script>
+  // Resolve theme synchronously before paint to avoid a light->dark flash.
+  // Order of preference: explicit user toggle (localStorage) -> OS preference.
+  (function () {
+    var stored = null;
+    try { stored = localStorage.getItem('theme'); } catch (_) {}
+    var systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var theme = stored || (systemDark ? 'dark' : 'light');
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
 </head>
 <body>
 <div class="flex min-h-dvh flex-col">
@@ -52,9 +64,14 @@
 </div>
 </main>
 </div>
+<button id="theme-toggle" type="button" aria-label="Toggle theme"
+  class="fixed right-4 top-20 z-50 flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white/95 text-gray-700 shadow-sm backdrop-blur-sm transition-colors hover:border-gray-400 dark:border-gray-700 dark:bg-gray-900/95 dark:text-gray-200 dark:hover:border-gray-500">
+  <svg class="theme-icon-sun h-4 w-4 dark:hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/></svg>
+  <svg class="theme-icon-moon hidden h-4 w-4 dark:block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"/></svg>
+</button>
 <!-- Live colour panel — type any HEX value (#rgb or #rrggbb) and the iso scene
      updates in real time. Sticks to the right edge so it doesn't cover the hero. -->
-<aside id="color-panel" class="fixed right-4 top-24 z-50 w-56 rounded-lg border border-gray-200 bg-white/95 p-3 text-sm shadow-md backdrop-blur-sm dark:border-gray-700 dark:bg-gray-900/95 dark:text-gray-200">
+<aside id="color-panel" class="fixed right-4 top-32 z-50 w-56 rounded-lg border border-gray-200 bg-white/95 p-3 text-sm shadow-md backdrop-blur-sm dark:border-gray-700 dark:bg-gray-900/95 dark:text-gray-200">
   <h3 class="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Theme colours</h3>
   <label class="mb-2 block">
     <span class="mb-1 block text-xs text-gray-600 dark:text-gray-400">Dash line</span>
@@ -167,6 +184,17 @@
       bind('cp-stroke', function (v) { document.documentElement.style.setProperty('--stroke-0', v); });
       bind('cp-top',    function (v) { document.documentElement.style.setProperty('--top-fill', v); });
       bind('cp-grid',   setGridStroke);
+    });
+
+    // Theme toggle: flips html.dark, which drives every Tailwind dark: variant
+    // on the page (header, buttons, cards) plus our --iso-cover-bg flip in
+    // bars.css. The colour inputs are independent — tweak them per theme.
+    var toggle = document.getElementById('theme-toggle');
+    toggle.addEventListener('click', function () {
+      var nextDark = !document.documentElement.classList.contains('dark');
+      document.documentElement.classList.toggle('dark', nextDark);
+      document.documentElement.dataset.theme = nextDark ? 'dark' : 'light';
+      try { localStorage.setItem('theme', nextDark ? 'dark' : 'light'); } catch (_) {}
     });
   })();
 </script>
