@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 <link rel="stylesheet" href="assets/style.css">
-<link rel="stylesheet" href="assets/bars.css?v=22">
+<link rel="stylesheet" href="assets/bars.css?v=23">
 <script>
   // Resolve theme synchronously before paint to avoid a light->dark flash.
   // Order of preference: explicit user toggle (localStorage) -> OS preference.
@@ -73,51 +73,35 @@
   (function () {
     'use strict';
 
-    // The bar SVGs already use var(--fill-0) and var(--stroke-0) but they're
-    // loaded via <img>, which doesn't pick up parent CSS variables. Inline
-    // them so html.dark overrides on .iso-stage actually reach into the
-    // bar paths. Cache by src so each unique file is fetched once.
-    function inlineBars() {
-      var imgs = Array.from(document.querySelectorAll('.bars-layer img'));
-      var cache = new Map();
-      return Promise.all(imgs.map(function (img) {
-        var src = img.getAttribute('src');
-        var p = cache.get(src) || fetch(src).then(function (r) { return r.text(); });
-        cache.set(src, p);
-        return p.then(function (text) {
-          var doc = new DOMParser().parseFromString(text, 'image/svg+xml');
-          var svg = doc.documentElement;
-
-          // Wire the gradient stops and the top-poly fill to CSS variables
-          // so html.dark .iso-stage overrides recolour them. The body
-          // fill and pattern stroke already use vars natively.
-          svg.querySelectorAll('stop[stop-color="white"]').forEach(function (s) {
-            s.setAttribute('stop-color', 'var(--fill-0, white)');
-          });
-          svg.querySelectorAll('path[fill="#FBFCFC"]').forEach(function (p) {
-            p.setAttribute('fill', 'var(--top-fill, #FBFCFC)');
-          });
-
-          svg.setAttribute('width', '100%');
-          svg.setAttribute('height', '100%');
-          svg.style.display = 'block';
-          img.replaceWith(svg);
-        });
-      }));
+    // Each .bars-layer <img> has two physical SVG sources: vN.svg for
+    // light theme and vN-dark.svg for dark theme. syncBarSrcs() swaps
+    // every bar's src to the variant that matches the active theme.
+    // The original (light) src is memoised on the element itself so we
+    // never lose it across toggles.
+    function syncBarSrcs(dark) {
+      var imgs = document.querySelectorAll('.bars-layer img');
+      imgs.forEach(function (img) {
+        if (!img.dataset.lightSrc) img.dataset.lightSrc = img.getAttribute('src');
+        var light = img.dataset.lightSrc;
+        var darkSrc = light.replace(/(\.svg)(\?.*)?$/, '-dark$1$2');
+        img.src = dark ? darkSrc : light;
+      });
     }
 
-    inlineBars();
+    // Initial paint: the html.dark class was set in <head> before paint,
+    // but the bars-layer imgs hadn't existed yet, so set them now.
+    syncBarSrcs(document.documentElement.classList.contains('dark'));
 
-    // Theme toggle: flips html.dark, which drives every Tailwind dark:
-    // variant on the page (header, cards, button) plus the dark-theme
-    // overrides in bars.css (--iso-cover-bg, --fill-0, --stroke-0,
-    // --top-fill, and the iso-grid-tile-dark.svg backdrop).
+    // Theme toggle: flips html.dark (drives Tailwind dark: variants on
+    // the page chrome plus the html.dark .iso-stage / .iso-grid-bg
+    // rules in bars.css), then re-syncs every bar's <img src>.
     var toggle = document.getElementById('theme-toggle');
     toggle.addEventListener('click', function () {
       var nextDark = !document.documentElement.classList.contains('dark');
       document.documentElement.classList.toggle('dark', nextDark);
       document.documentElement.dataset.theme = nextDark ? 'dark' : 'light';
       try { localStorage.setItem('theme', nextDark ? 'dark' : 'light'); } catch (_) {}
+      syncBarSrcs(nextDark);
     });
   })();
 </script>
