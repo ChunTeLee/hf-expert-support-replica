@@ -28,10 +28,27 @@ section:has(.iso-stage) {
 }
 .iso-grid-bg-cover { position: absolute; inset: var(--grid-inset, 0); z-index: -2; background: var(--iso-cover-bg, white); }
 
-/* Cover follows the page theme so the iso scene doesn't read as a white box
-   on a dark page. The 3D-bar / dash-line colours are user-driven via the
-   side panel, so they stay independent. */
-html.dark .iso-stage { --iso-cover-bg: #0b0f19; }
+/* Dark theme. Everything not explicitly recoloured stays user-controllable
+   via the inline-svg CSS variables; these defaults match the page's own
+   "grid structure" lines (Tailwind border-gray-200 = #e5e7eb).
+
+   - --iso-cover-bg:  page bg (#0b0f19) so the cover matches dark chrome.
+   - --fill-0:        bar body base + gradient-stop colour. The gradient
+                      keeps its existing offsets/opacities, so the top
+                      31% of each bar stays transparent (revealing the
+                      line pattern) and fades to solid #0B0F19 at the
+                      bottom -- same shape as light mode, dark colour.
+   - --stroke-0:      the diagonal pattern strokes inside the bars.
+   - --top-fill:      the top-poly diamonds, full opacity. */
+html.dark .iso-stage {
+  --iso-cover-bg: #0b0f19;
+  --fill-0: #0B0F19;
+  --stroke-0: #e5e7eb;
+  --top-fill: #e5e7eb;
+}
+/* Dash-line tile: load the dark variant whose stroke is the structure
+   line colour at full opacity. */
+html.dark .iso-grid-bg { background-image: url(iso-grid-tile-dark.svg); }
 
 .bars-layer { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
 .bars-layer .bar { position: absolute; display: block; --side-x: 0px; }

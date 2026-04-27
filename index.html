@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 <link rel="stylesheet" href="assets/style.css">
-<link rel="stylesheet" href="assets/bars.css?v=18">
+<link rel="stylesheet" href="assets/bars.css?v=19">
 <script>
   // Resolve theme synchronously before paint to avoid a light->dark flash.
   // Order of preference: explicit user toggle (localStorage) -> OS preference.
@@ -69,39 +69,14 @@
   <svg class="theme-icon-sun h-4 w-4 dark:hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/></svg>
   <svg class="theme-icon-moon hidden h-4 w-4 dark:block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"/></svg>
 </button>
-<!-- Live colour panel — type any HEX value (#rgb or #rrggbb) and the iso scene
-     updates in real time. Sticks to the right edge so it doesn't cover the hero. -->
-<aside id="color-panel" class="fixed right-4 top-32 z-50 w-56 rounded-lg border border-gray-200 bg-white/95 p-3 text-sm shadow-md backdrop-blur-sm dark:border-gray-700 dark:bg-gray-900/95 dark:text-gray-200">
-  <h3 class="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Theme colours</h3>
-  <label class="mb-2 block">
-    <span class="mb-1 block text-xs text-gray-600 dark:text-gray-400">Dash line</span>
-    <input id="cp-grid" type="text" value="#DFE5EE" spellcheck="false" autocomplete="off"
-           class="w-full rounded border border-gray-300 px-2 py-1 font-mono text-xs uppercase dark:border-gray-700 dark:bg-gray-950">
-  </label>
-  <label class="mb-2 block">
-    <span class="mb-1 block text-xs text-gray-600 dark:text-gray-400">3D bar body</span>
-    <input id="cp-fill" type="text" value="#FFFFFF" spellcheck="false" autocomplete="off"
-           class="w-full rounded border border-gray-300 px-2 py-1 font-mono text-xs uppercase dark:border-gray-700 dark:bg-gray-950">
-  </label>
-  <label class="mb-2 block">
-    <span class="mb-1 block text-xs text-gray-600 dark:text-gray-400">3D bar pattern</span>
-    <input id="cp-stroke" type="text" value="#DFE5EE" spellcheck="false" autocomplete="off"
-           class="w-full rounded border border-gray-300 px-2 py-1 font-mono text-xs uppercase dark:border-gray-700 dark:bg-gray-950">
-  </label>
-  <label class="block">
-    <span class="mb-1 block text-xs text-gray-600 dark:text-gray-400">3D bar top</span>
-    <input id="cp-top" type="text" value="#FBFCFC" spellcheck="false" autocomplete="off"
-           class="w-full rounded border border-gray-300 px-2 py-1 font-mono text-xs uppercase dark:border-gray-700 dark:bg-gray-950">
-  </label>
-</aside>
 <script>
   (function () {
     'use strict';
 
     // The bar SVGs already use var(--fill-0) and var(--stroke-0) but they're
     // loaded via <img>, which doesn't pick up parent CSS variables. Inline
-    // them so the variables resolve from the page's :root. Cache by src so
-    // each unique file is fetched once, even if multiple bars reuse it.
+    // them so html.dark overrides on .iso-stage actually reach into the
+    // bar paths. Cache by src so each unique file is fetched once.
     function inlineBars() {
       var imgs = Array.from(document.querySelectorAll('.bars-layer img'));
       var cache = new Map();
@@ -113,8 +88,9 @@
           var doc = new DOMParser().parseFromString(text, 'image/svg+xml');
           var svg = doc.documentElement;
 
-          // Make the gradient stops and the top-poly fill controllable via
-          // CSS vars. The body fill and pattern stroke are already wired.
+          // Wire the gradient stops and the top-poly fill to CSS variables
+          // so html.dark .iso-stage overrides recolour them. The body
+          // fill and pattern stroke already use vars natively.
           svg.querySelectorAll('stop[stop-color="white"]').forEach(function (s) {
             s.setAttribute('stop-color', 'var(--fill-0, white)');
           });
@@ -130,65 +106,12 @@
       }));
     }
 
-    // Build the iso-grid tile as an inline SVG data URL so the stroke colour
-    // is fully controllable. The geometry matches the original
-    // assets/iso-grid-tile.svg (180x104 with eight diagonal dash lines).
-    function buildGridDataUrl(stroke) {
-      var svg =
-        '<svg xmlns="http://www.w3.org/2000/svg" width="180" height="104" viewBox="0 0 180 104" fill="none">' +
-        '<g stroke="' + stroke + '" stroke-width="1" stroke-dasharray="3 3" fill="none">' +
-        '<line x1="0" y1="0" x2="90" y2="52"/>' +
-        '<line x1="90" y1="0" x2="180" y2="52"/>' +
-        '<line x1="0" y1="52" x2="90" y2="104"/>' +
-        '<line x1="90" y1="52" x2="180" y2="104"/>' +
-        '<line x1="90" y1="0" x2="0" y2="52"/>' +
-        '<line x1="180" y1="0" x2="90" y2="52"/>' +
-        '<line x1="90" y1="52" x2="0" y2="104"/>' +
-        '<line x1="180" y1="52" x2="90" y2="104"/>' +
-        '</g></svg>';
-      return 'url("data:image/svg+xml;utf8,' + encodeURIComponent(svg) + '")';
-    }
+    inlineBars();
 
-    function setGridStroke(color) {
-      var url = buildGridDataUrl(color);
-      document.querySelectorAll('.iso-grid-bg').forEach(function (el) {
-        el.style.backgroundImage = url;
-      });
-    }
-
-    var HEX_RE = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
-    function isHex(v) { return HEX_RE.test(v); }
-
-    function bind(id, apply) {
-      var input = document.getElementById(id);
-      input.addEventListener('input', function () {
-        var v = input.value.trim();
-        if (!isHex(v)) return;
-        apply(v);
-      });
-    }
-
-    inlineBars().then(function () {
-      // Initial paints — pick up whatever default values are in the inputs.
-      var fill   = document.getElementById('cp-fill').value;
-      var stroke = document.getElementById('cp-stroke').value;
-      var top    = document.getElementById('cp-top').value;
-      var grid   = document.getElementById('cp-grid').value;
-      document.documentElement.style.setProperty('--fill-0', fill);
-      document.documentElement.style.setProperty('--stroke-0', stroke);
-      document.documentElement.style.setProperty('--top-fill', top);
-      setGridStroke(grid);
-
-      // Wire each input for live updates.
-      bind('cp-fill',   function (v) { document.documentElement.style.setProperty('--fill-0', v); });
-      bind('cp-stroke', function (v) { document.documentElement.style.setProperty('--stroke-0', v); });
-      bind('cp-top',    function (v) { document.documentElement.style.setProperty('--top-fill', v); });
-      bind('cp-grid',   setGridStroke);
-    });
-
-    // Theme toggle: flips html.dark, which drives every Tailwind dark: variant
-    // on the page (header, buttons, cards) plus our --iso-cover-bg flip in
-    // bars.css. The colour inputs are independent — tweak them per theme.
+    // Theme toggle: flips html.dark, which drives every Tailwind dark:
+    // variant on the page (header, cards, button) plus the dark-theme
+    // overrides in bars.css (--iso-cover-bg, --fill-0, --stroke-0,
+    // --top-fill, and the iso-grid-tile-dark.svg backdrop).
     var toggle = document.getElementById('theme-toggle');
     toggle.addEventListener('click', function () {
       var nextDark = !document.documentElement.classList.contains('dark');
