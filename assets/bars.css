@@ -26,7 +26,20 @@ section:has(.iso-stage) {
   -webkit-mask-image: var(--grid-fade);
           mask-image: var(--grid-fade);
 }
-.iso-grid-bg-cover { position: absolute; inset: var(--grid-inset, 0); z-index: -2; background: white; }
+.iso-grid-bg-cover { position: absolute; inset: var(--grid-inset, 0); z-index: -2; background: var(--iso-cover-bg, white); }
+
+/* Dark theme — colours sampled from huggingface.co/support in dark mode:
+   page bg #0b0f19 (Tailwind v3 gray-950), border #141c2e, fg #e5e7eb,
+   button bg #d1d5dc, secondary text #99a1af. The grid lines stay at
+   their original light gray so they sit subtly atop the dark cover. */
+.dark .iso-stage,
+:root[data-theme="dark"] .iso-stage,
+html.dark .iso-stage {
+  --iso-cover-bg: #0b0f19;
+}
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .iso-stage { --iso-cover-bg: #0b0f19; }
+}
 
 .bars-layer { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
 .bars-layer .bar { position: absolute; display: block; --side-x: 0px; }
