@@ -14,7 +14,18 @@ section:has(.iso-stage) {
   z-index: -1;
   --mobile-shift: 0px;
 }
-.iso-grid-bg { position: absolute; inset: var(--grid-inset, 0); z-index: -1; background-image: url(iso-grid-tile.svg); background-repeat: repeat; background-position: calc(50% + -34.190px) calc(50% + -10.960px); }
+.iso-grid-bg {
+  position: absolute; inset: var(--grid-inset, 0); z-index: -1;
+  background-image: url(iso-grid-tile.svg); background-repeat: repeat;
+  background-position: calc(50% + -34.190px) calc(50% + -10.960px);
+  /* Fade the dash-line grid out around the title so the bars on the
+     sides stay sharp but the centre reads cleanly. The mask is radial
+     and elliptical: clear inner zone, smooth fade out to fully opaque
+     before the lines reach the 3D bar clusters. */
+  --grid-fade: radial-gradient(ellipse 38% 65% at 50% 50%, transparent 8%, black 90%);
+  -webkit-mask-image: var(--grid-fade);
+          mask-image: var(--grid-fade);
+}
 .iso-grid-bg-cover { position: absolute; inset: var(--grid-inset, 0); z-index: -2; background: white; }
 
 .bars-layer { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
