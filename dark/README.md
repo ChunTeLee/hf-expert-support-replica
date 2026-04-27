@@ -13,12 +13,30 @@ light, and the choice is persisted to `localStorage` so it survives reloads.
    - `figma/` (the bar SVGs — `v1.svg` … `v24.svg`)
    - `iso-grid-tile.svg`, `iso-grid-tile-dark.svg`
    - `huggingface_logo-noborder.svg`
-3. (Optional, recommended) Move the synchronous theme bootstrap script
-   from `<svelte:head>` into your shell's `app.html` so it runs before
-   the first paint instead of after hydration. The block to copy is the
-   `{@html '<script>...</script>'}` line — its body sets
-   `document.documentElement.classList` based on `localStorage.theme`
-   or `prefers-color-scheme`.
+3. **Required** for FOUC-free first paint: paste this snippet inside
+   `<head>` in your project's `src/app.html`. It runs synchronously
+   before hydration and sets `html.dark` from `localStorage.theme` (or
+   `prefers-color-scheme`, defaulting to dark). Without it, the initial
+   render will use the default Tailwind theme and visibly flip once
+   `onMount` runs in the component:
+
+   ```html
+   <script>
+     (function () {
+       var stored = null;
+       try { stored = localStorage.getItem('theme'); } catch (_) {}
+       var systemDark = window.matchMedia
+         && window.matchMedia('(prefers-color-scheme: dark)').matches;
+       var theme = stored || (systemDark ? 'dark' : 'dark');
+       document.documentElement.classList.toggle('dark', theme === 'dark');
+       document.documentElement.dataset.theme = theme;
+     })();
+   </script>
+   ```
+
+   Tweak the `(systemDark ? 'dark' : 'dark')` fallback if you want this
+   export to honour the user's OS preference instead of always
+   defaulting to dark.
 
 ## Drop-in steps (plain Svelte)
 

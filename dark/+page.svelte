@@ -37,11 +37,11 @@
       const doc = new DOMParser().parseFromString(text, 'image/svg+xml');
       const svg = doc.documentElement;
 
-      svg.querySelectorAll('stop[stop-color="white"]').forEach((s) => {
-        s.setAttribute('stop-color', 'var(--fill-0, white)');
+      svg.querySelectorAll('stop[stop-color="white"]').forEach((stop) => {
+        stop.setAttribute('stop-color', 'var(--fill-0, white)');
       });
-      svg.querySelectorAll('path[fill="#FBFCFC"]').forEach((p) => {
-        p.setAttribute('fill', 'var(--top-fill, #FBFCFC)');
+      svg.querySelectorAll('path[fill="#FBFCFC"]').forEach((path) => {
+        path.setAttribute('fill', 'var(--top-fill, #FBFCFC)');
       });
 
       svg.setAttribute('width', '100%');
@@ -82,18 +82,16 @@
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/bars.css" />
   <!--
-    Synchronous theme bootstrap to avoid a light-then-dark flash on first
-    paint. SvelteKit injects this into the document <head> at SSR time so
-    it runs before any of the page markup is painted. If you're rendering
-    purely client-side, move this script to your shell template (app.html)
-    instead.
+    NOTE: Synchronous theme bootstrap (light/dark resolution before paint)
+    cannot live here — scripts injected via {@html} in <svelte:head> are
+    not executed by the browser. Paste the snippet from README.md into
+    your project's `app.html` instead so it runs before hydration. Without
+    that snippet, first paint will briefly use the default theme and then
+    flip to the persisted choice once `onMount` runs below.
   -->
-  {@html `<script>(function(){var s=null;try{s=localStorage.getItem('theme')}catch(_){};var d=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;var t=s||(d?'dark':'dark');document.documentElement.classList.toggle('dark',t==='dark');document.documentElement.dataset.theme=t})();</script>`}
 </svelte:head>
 
-<svelte:body class="bg-white dark:bg-gray-950" />
-
-<div class="flex min-h-dvh flex-col">
+<div class="flex min-h-dvh flex-col bg-white dark:bg-gray-950">
   <header class="border-b border-gray-100 dark:border-gray-850 ">
     <div class="w-full px-4 container flex h-16 items-center">
       <div class="flex flex-1 items-center">
