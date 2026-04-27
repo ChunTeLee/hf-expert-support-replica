@@ -43,8 +43,8 @@ section:has(.iso-stage) {
 html.dark .iso-stage {
   --iso-cover-bg: #0b0f19;
   --fill-0: #0B0F19;
-  --stroke-0: #374151;
-  --top-fill: #374151;
+  --stroke-0: #171C2E;
+  --top-fill: #171C2E;
 }
 /* Dash-line tile: load the dark variant whose stroke is the structure
    line colour at full opacity. */
